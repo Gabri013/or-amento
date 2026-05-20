@@ -1,0 +1,46 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isLoggedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isLoggedIn() &&
+        get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.tipo == 'admin';
+    }
+
+    function isOwner(vendedorId) {
+      return isLoggedIn() && request.auth.uid == vendedorId;
+    }
+
+    // Usuários: admin lê tudo, usuário lê só o próprio; escrita só admin
+    match /usuarios/{uid} {
+      allow read: if isLoggedIn() && (isAdmin() || request.auth.uid == uid);
+      allow write: if isAdmin();
+    }
+
+    // Orçamentos: admin tudo, vendedor próprios
+    match /orcamentos/{id} {
+      allow read: if isAdmin() || isOwner(resource.data.vendedorId);
+      allow create: if isLoggedIn();
+      allow update, delete: if isAdmin() || isOwner(resource.data.vendedorId);
+    }
+
+    // Vendas: igual orçamentos
+    match /vendas/{id} {
+      allow read: if isAdmin() || isOwner(resource.data.vendedorId);
+      allow create: if isLoggedIn();
+      allow update, delete: if isAdmin() || isOwner(resource.data.vendedorId);
+    }
+
+    // Clientes e Produtos: qualq logged-in
+    match /clientes/{id} {
+      allow read, write: if isLoggedIn();
+    }
+    match /produtos/{id} {
+      allow read, write: if isLoggedIn();
+    }
+  }
+}
