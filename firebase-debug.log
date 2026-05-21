@@ -1,0 +1,35 @@
+[debug] [2026-05-21T08:21:46.149Z] ----------------------------------------------------------------------
+[debug] [2026-05-21T08:21:46.151Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\gabri\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js use sistema-de-40dda
+[debug] [2026-05-21T08:21:46.151Z] CLI Version:   15.18.0
+[debug] [2026-05-21T08:21:46.151Z] Platform:      win32
+[debug] [2026-05-21T08:21:46.151Z] Node Version:  v24.15.0
+[debug] [2026-05-21T08:21:46.152Z] Time:          Thu May 21 2026 05:21:46 GMT-0300 (Horário Padrão de Brasília)
+[debug] [2026-05-21T08:21:46.152Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-05-21T08:21:46.154Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2026-05-21T08:21:46.178Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-05-21T08:21:46.194Z] Error: Could not load the default credentials. Browse to https://cloud.google.com/docs/authentication/getting-started for more information.
+    at GoogleAuth.getApplicationDefaultAsync (C:\Users\gabri\AppData\Roaming\npm\node_modules\firebase-tools\node_modules\google-auth-library\build\src\auth\googleauth.js:287:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async GoogleAuth._GoogleAuth_determineClient (C:\Users\gabri\AppData\Roaming\npm\node_modules\firebase-tools\node_modules\google-auth-library\build\src\auth\googleauth.js:834:32)
+    at async GoogleAuth.getClient (C:\Users\gabri\AppData\Roaming\npm\node_modules\firebase-tools\node_modules\google-auth-library\build\src\auth\googleauth.js:698:20)
+    at async GoogleAuth.getAccessToken (C:\Users\gabri\AppData\Roaming\npm\node_modules\firebase-tools\node_modules\google-auth-library\build\src\auth\googleauth.js:722:24)
+    at async autoAuth (C:\Users\gabri\AppData\Roaming\npm\node_modules\firebase-tools\lib\requireAuth.js:28:19)
+    at async Object.requireAuth [as fn] (C:\Users\gabri\AppData\Roaming\npm\node_modules\firebase-tools\lib\requireAuth.js:90:20)
+    at async C:\Users\gabri\AppData\Roaming\npm\node_modules\firebase-tools\lib\command.js:271:17
+[error] 
+[error] Error: Failed to authenticate, have you run firebase login?
+[debug] [2026-05-21T08:26:09.654Z] ----------------------------------------------------------------------
+[debug] [2026-05-21T08:26:09.658Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\gabri\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js use sistema-de-40dda
+[debug] [2026-05-21T08:26:09.659Z] CLI Version:   15.18.0
+[debug] [2026-05-21T08:26:09.659Z] Platform:      win32
+[debug] [2026-05-21T08:26:09.659Z] Node Version:  v24.15.0
+[debug] [2026-05-21T08:26:09.659Z] Time:          Thu May 21 2026 05:26:09 GMT-0300 (Horário Padrão de Brasília)
+[debug] [2026-05-21T08:26:09.660Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-05-21T08:26:09.667Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-05-21T08:26:09.668Z] > authorizing via signed-in user (g4bs011.gbl@gmail.com)
+[error] 
+[error] Error: firebase use must be run from a Firebase project directory.
+
+Run firebase init to start a project directory in the current folder.
