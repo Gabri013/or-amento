@@ -34,7 +34,7 @@ export default function Login() {
       <div style={{ width: '100%', maxWidth: '400px', borderRadius: '12px' }} className="card shadow">
         <div className="card-body p-4">
           <div className="text-center mb-4">
-            <img src="/imagens/cozincainox.png" alt="Cozinca Inox" style={{ maxWidth: '200px', margin: '0 auto' }} onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/200x80?text=Cozinca+Inox'; }} />
+            <img src="/imagens/cozincainox.png" alt="Cozinca Inox" style={{ maxWidth: '200px', margin: '0 auto' }} onError={(e) => { const el = e.target as HTMLImageElement; el.style.display = 'none'; el.parentElement!.innerHTML = '<h3 style="color:#ff530d;font-weight:700;">COZINCA INOX</h3>'; }} />
           </div>
           <h5 className="card-title text-center mb-4" style={{ fontWeight: 700, color: '#1c1c1c' }}>Acesso ao Sistema</h5>
           {erro && <div className="alert" style={{ backgroundColor: '#f8d7da', color: '#842029', border: '1px solid #f5c2c7', borderRadius: '8px' }}>{erro}</div>}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { buscarColecao, salvarDocumento, atualizarDocumento, excluirDocumento, COLECOES } from '../firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { storage } from '../firebase/config';

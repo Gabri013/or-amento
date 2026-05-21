@@ -113,7 +113,7 @@ export default function ListarOrcamentos() {
                   <td>{orc.nomeCliente}</td>
                   <td>{orc.vendedorNome}</td>
                   <td style={{ textAlign: 'right', fontWeight: 600 }}>R$ {orc.totalFinal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
-                  <td><span className="badge" style={{ background: st.bg, color: st.color, border: 'none', borderRadius: '8px', padding: '6px 10px' }}>{orc.status.toUpperCase()}</span></td>
+                  <td><span className="badge" style={{ background: st.bg, color: st.cor, border: 'none', borderRadius: '8px', padding: '6px 10px' }}>{orc.status.toUpperCase()}</span></td>
                   <td>{data.toLocaleDateString('pt-BR')}</td>
                   <td style={{ textAlign: 'right' }}>
                     <div className="d-flex justify-content-end gap-1 flex-wrap">

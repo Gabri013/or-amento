@@ -1,0 +1,12 @@
+- generic [ref=e5]:
+  - generic [ref=e6]:
+    - img "Cozinca Inox"
+  - heading "Acesso ao Sistema" [level=5] [ref=e7]
+  - generic [ref=e8]:
+    - generic [ref=e9]:
+      - text: Email
+      - textbox "seu@email.com" [ref=e10]
+    - generic [ref=e11]:
+      - text: Senha
+      - textbox "••••••••" [ref=e12]
+    - button "Entrar" [ref=e13]

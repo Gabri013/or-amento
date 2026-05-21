@@ -1,131 +1,100 @@
-# Firebase Setup — Cozinca Inox
+# Firebase Setup — Cozinca Inox (sistema-de-40dda)
 
-Este documento descreve o passo a passo para configurar o Firebase e colocar o sistema em funcionamento.
-
----
-
-## 1. Criar o Projeto no Firebase Console
-
-1. Acesse [https://console.firebase.google.com/](https://console.firebase.google.com/)
-2. Clique **Adicionar projeto**
-3. Nome: `cozinca-orcamentos` (ou outro de sua escolha)
-4. Desative **Google Analytics** (não é necessário)
-5. Clique **Criar projeto**
+O projeto usa o Firebase já criado: **sistema-de-40dda**.
+Basta concluir os passos abaixo para colocar o sistema em funcionamento.
 
 ---
 
-## 2. Ativar Authentication (Email/Senha)
+## 1. Autenticação por Email/Senha
 
-1. No menu lateral do console, clique **Authentication**
+1. Acesse https://console.firebase.google.com/project/sistema-de-40dda/authentication
 2. Clique **Começar**
-3. Na aba **Sign-in method**, clique **Email/senha**
-4. Ative o toggle
-5. Salve
+3. Aba **Sign-in method** → **Email/senha**
+4. Ative o toggle → **Salvar**
 
 ---
 
-## 3. Ativar Firestore Database
+## 2. Publicar as Regras do Firestore
 
-1. No menu lateral, clique **Cloud Firestore**
-2. Clique **Criar banco de dados**
-3. Escolha o modo **Produção** (não Modo de Teste)
-4. Escolha a localização mais próxima de você (ex: `southamerica-east1`)
-5. Clique **Ativar**
-
----
-
-## 4. Ativar Cloud Storage
-
-1. No menu lateral, clique **Storage**
-2. Clique **Começar**
-3. Localização: mesma escolhida no Firestore
-4. Clique **Pronto**
-
----
-
-## 5. Configurar Cloud Functions (criar usuario)
-
-1. Instale o Firebase CLI se ainda não tiver:
-   ```bash
-   npm install -g firebase-tools
-   ```
-
-2. Na raiz do projeto, inicialize o functions:
-   ```bash
-   firebase init functions
-   ```
-
-3. Escolha:
-   - Usar o projeto existente `cozinca-orcamentos`
-   - Linguagem: **TypeScript**
-
-4. Instale dependências:
-   ```bash
-   cd functions
-   npm install firebase-admin
-   ```
-
-5. Edite `functions/src/index.ts` e adicione a função `criarUsuario` (ver `functions/src/index.ts` no projeto)
-
-6. Implante:
-   ```bash
-   firebase deploy --only functions:criarUsuario
-   ```
-
----
-
-## 6. Copiar Chaves para o .env
-
-1. No console Firebase, vá em **Configurações do Projeto** (⚙️ no topo direito)
-2. Role até **Seus aplicativos**
-3. Selecione o app da web (icon `</>`)
-4. Copie o objeto `firebaseConfig` exibido
-5. Cole em `.env` substituindo os placeholders:
-
-```env
-VITE_FIREBASE_API_KEY=AIzaSy...
-VITE_FIREBASE_AUTH_DOMAIN=cozinca-orcamentos.firebaseapp.com
-VITE_FIREBASE_PROJECT_ID=cozinca-orcamentos
-VITE_FIREBASE_STORAGE_BUCKET=cozinca-orcamentos.appspot.com
-VITE_FIREBASE_MESSAGING_SENDER_ID=1234567890
-VITE_FIREBASE_APP_ID=1:123:web:...
-```
-
----
-
-## 7. Criar Usuário Admin Manualmente
-
-1. Vá em **Authentication → Usuários**
-2. Clique **Adicionar usuário**
-3. Email: `admin@cozinca.com.br`
-4. Senha: `cozinca@2025` (ou outra de sua escolha)
-5. Clique **Adicionar usuário**
-6. Anote o **UID** que aparecer — será usado no seed
-
----
-
-## 8. Fazer o Primeiro Deploy
+No terminal, com o Firebase CLI instalado (`npm install -g firebase-tools`):
 
 ```bash
-npm install   # instala todas as dependências
-npm run dev   # roda em modo de desenvolvimento em http://localhost:5173
+cd cozinca-orcamentos
+firebase login
+firebase use sistema-de-40dda
+firebase deploy --only firestore:rules
+```
+
+Isso aplica o arquivo `firestore.rules` no banco de dados.
+
+---
+
+## 3. Criar o Primeiro Usuário Admin
+
+1. Na console do Firebase → Authentication → Usuários → **Adicionar usuário**
+2. Email: `admin@cozinca.com.br`
+3. Senha: (escolha uma senha segura)
+4. Clique **Adicionar usuário**
+5. Anote o **UID** retornado
+
+Depois, vá até Cloud Firestore → `usuarios` e crie um documento com esses campos:
+
+```json
+{
+  "uid": "<UID_ANOTADO>",
+  "nome": "Administrador",
+  "email": "admin@cozinca.com.br",
+  "tipo": "admin",
+  "ativo": true,
+  "criadoEm": <timestamp atual>
+}
 ```
 
 ---
 
-## 9. Publicar dados iniciais (seed)
+## 4. Deploy da Cloud Function (opcional — para criar usuários pela interface)
 
-O seed roda automaticamente na primeira vez que o app abre.
-Se precisar rodar manualmente, chame `seedBancoDeDados()` do console do navegador.
+```bash
+cd cozinca-orcamentos/functions
+npm install
+cd ..
+firebase deploy --only functions:criarUsuario
+```
 
 ---
 
-## Observações
+## 5. Rodar em Desenvolvimento
 
-- Os arquivos PHP originais (`*.php`, `db.php`, `logout.php`) não são mais usados.
-- A pasta `uploads/` original não existe mais — imagens vão para o Firebase Storage.
-- O deploy para produção é feito com:
-  ```bash
-  firebase init hosting
-  firebase deploy
-  ```
+```bash
+npm install
+npm run dev
+```
+
+Acesse http://localhost:5173/login e use o email/senha do admin criado no passo 3.
+
+---
+
+## 6. Seed de Dados Iniciais
+
+Os dados de exemplo (3 produtos + 1 cliente) são inseridos automaticamente na
+primeira abertura do app, ou você pode chamar manualmente no console do navegador:
+
+```js
+import { seedBancoDeDados } from './firebase/seed';
+seedBancoDeDados();
+```
+
+---
+
+## Estrutura do Projeto
+
+| Pasta/Arquivo | Descrição |
+|---|---|
+| `src/auth/` | AuthProvider, PrivateRoute, AdminRoute |
+| `src/firebase/` | Config Firebase, funções CRUD, seed |
+| `src/pages/` | 9 páginas (Login, Dashboard, Criar/Editar/Listar Orçamentos, Vendas, Cadastro, Relatórios, Admin) |
+| `src/components/` | Layout, FormularioOrcamento, OrcamentoPDF |
+| `firestore.rules` | Regras de segurança do Firestore |
+| `firestore.indexes.json` | Índices compostos do banco |
+| `functions/` | Cloud Function `criarUsuario` |
+| `dist/` | Build de produção |

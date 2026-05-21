@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { User, UserCredential } from 'firebase/auth';
+import { UserCredential } from 'firebase/auth';
 import { loginComEmail, logout, onAuthStateChangedWrapper } from '../firebase/auth';
 import { buscarDocumento } from '../firebase/firestore';
 import { COLECOES } from '../firebase/firestore';

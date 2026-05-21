@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
 import { httpsCallable } from 'firebase/functions';
 import { getFunctions } from 'firebase/functions';
-import { useAuth } from '../auth/AuthContext';
 import { buscarColecao, atualizarDocumento, COLECOES } from '../firebase/firestore';
 import type { Usuario } from '../types';
 
 export default function Admin() {
-  const { isAdmin } = useAuth();
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [loading, setLoading] = useState(true);
 

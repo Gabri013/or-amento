@@ -1,17 +1,17 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from '../auth/AuthContext';
-import PrivateRoute from '../auth/PrivateRoute';
-import { AdminRoute } from '../auth/AdminRoute';
-import Layout from './Layout';
-import Login from '../pages/Login';
-import Dashboard from '../pages/Dashboard';
-import CriarOrcamento from '../pages/CriarOrcamento';
-import ListarOrcamentos from '../pages/ListarOrcamentos';
-import EditarOrcamento from '../pages/EditarOrcamento';
-import Vendas from '../pages/Vendas';
-import Cadastro from '../pages/Cadastro';
-import Relatorios from '../pages/Relatorios';
-import Admin from '../pages/Admin';
+import { AuthProvider } from './auth/AuthContext';
+import { PrivateRoute } from './auth/PrivateRoute';
+import { AdminRoute } from './auth/AdminRoute';
+import Layout from './components/Layout';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
+import CriarOrcamento from './pages/CriarOrcamento';
+import ListarOrcamentos from './pages/ListarOrcamentos';
+import EditarOrcamento from './pages/EditarOrcamento';
+import Vendas from './pages/Vendas';
+import Cadastro from './pages/Cadastro';
+import Relatorios from './pages/Relatorios';
+import Admin from './pages/Admin';
 
 export default function App() {
   return (

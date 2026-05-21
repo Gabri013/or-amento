@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
   data: { textAlign: 'center', fontSize: 9, color: '#555', marginBottom: 15 },
   th: { padding: 8, background: '#ff530d', color: '#fff', fontWeight: 'bold' },
   td: { padding: 7, borderBottom: '1 solid #e5e7eb', fontSize: 9 },
-  table: { width: '100%', borderCollapse: 'collapse', marginTop: 8 },
+  table: { width: '100%', marginTop: 8 },
   resumo: { marginTop: 15, background: '#fef6f2', border: '1 solid #ff530d', borderRadius: 6, padding: 8 },
   condicoes: { marginTop: 15, background: '#fef6f2', border: '1 solid #ff530d', borderRadius: 6, padding: 8 },
   footer: { textAlign: 'center', fontSize: 8, color: '#777', marginTop: 15 },
@@ -31,8 +31,8 @@ export function OrcamentoPDF({ orcamento }: OrcamentoPDFProps) {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        <View style={styles.header}>
-          <Image src="/imagens/cozincainox.png" style={styles.logo} onError={() => null} />
+         <View style={styles.header}>
+          <Image src="/imagens/cozincainox.png" style={styles.logo} />
           <Text style={{ fontSize: 10, textAlign: 'right', color: '#555' }}>COZINCA INOX PRODUTOS E SERVICOS LTDA{'\n'}CNPJ: 00.000.000/0001-00</Text>
         </View>
         <Text style={styles.numeroOrcamento}>ORÇAMENTO Nº {orcamento.codigo}</Text>
