@@ -38,7 +38,12 @@ function ClientesTab() {
     } catch (err) { console.error(err); } finally { setLoading(false); }
   };
 
-  useEffect(() => { carregar(); }, []);
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      void carregar();
+    }, 0);
+    return () => clearTimeout(timeout);
+  }, []);
 
   const limparForm = () => { setNome(''); setDocumento(''); setTelefone(''); setEmail(''); setEndereco(''); setEditandoId(null); };
   const handleEditar = (cli: Cliente) => { setNome(cli.nome); setDocumento(cli.documento); setTelefone(cli.telefone); setEmail(cli.email); setEndereco(cli.endereco); setEditandoId(cli.id); setMostrarForm(true); };
@@ -116,7 +121,12 @@ function ProdutosTab() {
     } catch (err) { console.error(err); } finally { setLoading(false); }
   };
 
-  useEffect(() => { carregar(); }, []);
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      void carregar();
+    }, 0);
+    return () => clearTimeout(timeout);
+  }, []);
 
   const limparForm = () => { setNome(''); setSku(''); setDescricao(''); setPrecoBase(''); setUnidade('un'); setAtivo(true); setImagem(''); setArquivoImagem(null); setEditandoId(null); };
   const handleEditar = (p: Produto) => { setNome(p.nome); setSku(p.sku); setDescricao(p.descricao); setPrecoBase(String(p.precoBase)); setUnidade(p.unidade); setAtivo(p.ativo); setImagem(p.imagem || ''); setEditandoId(p.id); setMostrarForm(true); };

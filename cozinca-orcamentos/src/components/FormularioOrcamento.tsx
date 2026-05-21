@@ -4,8 +4,8 @@ import {
   useMemo,
   useCallback,
 } from 'react';
-import { useAuth } from '../auth/AuthContext';
-import { buscarColecao, buscarComFiltro, COLECOES } from '../firebase/firestore';
+import { useAuth } from '../auth/useAuth';
+import { buscarComFiltro, COLECOES } from '../firebase/firestore';
 import { Cliente, Produto, ItemOrcamento, Orcamento } from '../types';
 
 type ModalAba = 'buscar' | 'manual';
@@ -20,21 +20,56 @@ export default function FormularioOrcamento({
   onSalvar,
 }: FormularioOrcamentoProps) {
   const { user } = useAuth();
+  const vendedorNome = user?.nome || '';
+
+  const inicial = useMemo(() => {
+    if (!orcamentoInicial) {
+      return {
+        nomeCliente: '',
+        endereco: '',
+        telefone: '',
+        emailCliente: '',
+        cnpj: '',
+        itens: [] as ItemOrcamento[],
+        setores: [] as string[],
+        frete: '',
+        desconto: '',
+        formaPagamento: '',
+        condicoesEntrega: '',
+        assinaturaVendedor: '',
+        codigoOrcamento: '',
+      };
+    }
+
+    return {
+      nomeCliente: orcamentoInicial.nomeCliente,
+      endereco: orcamentoInicial.endereco,
+      telefone: orcamentoInicial.telefone,
+      emailCliente: orcamentoInicial.email,
+      cnpj: orcamentoInicial.cnpj,
+      itens: orcamentoInicial.itens,
+      setores: [...new Set(orcamentoInicial.itens.map((item) => item.setor).filter(Boolean) as string[])],
+      frete: String(orcamentoInicial.frete),
+      desconto: String(orcamentoInicial.desconto),
+      formaPagamento: orcamentoInicial.formaPagamento,
+      condicoesEntrega: orcamentoInicial.condicoesEntrega,
+      assinaturaVendedor: orcamentoInicial.assinaturaVendedor,
+      codigoOrcamento: orcamentoInicial.codigo,
+    };
+  }, [orcamentoInicial]);
 
   // Cliente
-  const [nomeCliente, setNomeCliente] = useState('');
-  const [endereco, setEndereco] = useState('');
-  const [telefone, setTelefone] = useState('');
-  const [emailCliente, setEmailCliente] = useState('');
-  const [cnpj, setCnpj] = useState('');
-  const [clienteSelecionado, setClienteSelecionado] = useState<Cliente | null>(null);
+  const [nomeCliente, setNomeCliente] = useState(inicial.nomeCliente);
+  const [endereco, setEndereco] = useState(inicial.endereco);
+  const [telefone, setTelefone] = useState(inicial.telefone);
+  const [emailCliente, setEmailCliente] = useState(inicial.emailCliente);
+  const [cnpj, setCnpj] = useState(inicial.cnpj);
   const [buscaCliente, setBuscaCliente] = useState('');
   const [clientesEncontrados, setClientesEncontrados] = useState<Cliente[]>([]);
-  const [vendedorNome, setVendedorNome] = useState(user?.nome || '');
 
   // Itens
-  const [itens, setItens] = useState<ItemOrcamento[]>([]);
-  const [setores, setSetores] = useState<string[]>([]);
+  const [itens, setItens] = useState<ItemOrcamento[]>(inicial.itens);
+  const [setores, setSetores] = useState<string[]>(inicial.setores);
   const [novoSetor, setNovoSetor] = useState('');
 
   // Modal produto
@@ -50,41 +85,21 @@ export default function FormularioOrcamento({
   const [manualDesc, setManualDesc] = useState('');
 
   // Totais
-  const [frete, setFrete] = useState('');
-  const [desconto, setDesconto] = useState('');
-  const [formaPagamento, setFormaPagamento] = useState('');
-  const [condicoesEntrega, setCondicoesEntrega] = useState('');
-  const [assinaturaVendedor, setAssinaturaVendedor] = useState('');
-  const [codigoOrcamento, setCodigoOrcamento] = useState('');
+  const [frete, setFrete] = useState(inicial.frete);
+  const [desconto, setDesconto] = useState(inicial.desconto);
+  const [formaPagamento, setFormaPagamento] = useState(inicial.formaPagamento);
+  const [condicoesEntrega, setCondicoesEntrega] = useState(inicial.condicoesEntrega);
+  const [assinaturaVendedor, setAssinaturaVendedor] = useState(inicial.assinaturaVendedor);
+  const codigoOrcamento = inicial.codigoOrcamento;
   const [loading, setLoading] = useState(false);
-
-  // Load from orcamentoInicial
-  useEffect(() => {
-    if (orcamentoInicial) {
-      setNomeCliente(orcamentoInicial.nomeCliente);
-      setEndereco(orcamentoInicial.endereco);
-      setTelefone(orcamentoInicial.telefone);
-      setEmailCliente(orcamentoInicial.email);
-      setCnpj(orcamentoInicial.cnpj);
-      setItens(orcamentoInicial.itens);
-      setFrete(String(orcamentoInicial.frete));
-      setDesconto(String(orcamentoInicial.desconto));
-      setFormaPagamento(orcamentoInicial.formaPagamento);
-      setCondicoesEntrega(orcamentoInicial.condicoesEntrega);
-      setAssinaturaVendedor(orcamentoInicial.assinaturaVendedor);
-      setCodigoOrcamento(orcamentoInicial.codigo);
-      const setoresUnicos = [...new Set(orcamentoInicial.itens.map((i) => i.setor).filter(Boolean) as string[])];
-      setSetores(setoresUnicos);
-    }
-  }, [orcamentoInicial]);
 
   // Busca de clientes
   useEffect(() => {
-    if (buscaCliente.length < 2) {
-      setClientesEncontrados([]);
-      return;
-    }
     const timeout = setTimeout(async () => {
+      if (buscaCliente.length < 2) {
+        setClientesEncontrados([]);
+        return;
+      }
       const dados = await buscarComFiltro<Cliente>(
         COLECOES.CLIENTES,
         'nome',
@@ -97,11 +112,11 @@ export default function FormularioOrcamento({
 
   // Busca de produtos
   useEffect(() => {
-    if (buscaProduto.length < 2) {
-      setProdutosEncontrados([]);
-      return;
-    }
     const timeout = setTimeout(async () => {
+      if (buscaProduto.length < 2) {
+        setProdutosEncontrados([]);
+        return;
+      }
       const dados = await buscarComFiltro<Produto>(
         COLECOES.PRODUTOS,
         'nome',
@@ -119,11 +134,6 @@ export default function FormularioOrcamento({
       setNovoSetor('');
     }
   }, [novoSetor, setores]);
-
-  const removerSetor = useCallback((nome: string) => {
-    setSetores((prev) => prev.filter((s) => s !== nome));
-    setItens((prev) => prev.filter((i) => i.setor !== nome));
-  }, []);
 
   const adicionarItem = useCallback(
     (
@@ -263,7 +273,6 @@ export default function FormularioOrcamento({
                       type="button"
                       className="list-group-item list-group-item-action"
                       onClick={() => {
-                        setClienteSelecionado(cli);
                         setNomeCliente(cli.nome);
                         setEndereco(cli.endereco);
                         setTelefone(cli.telefone);

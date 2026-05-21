@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../auth/AuthContext';
+import { useAuth } from '../auth/useAuth';
 import { buscarComFiltro, salvarDocumento, buscarColecao, COLECOES } from '../firebase/firestore';
 import type { Cliente, Produto, ItemOrcamento, Orcamento } from '../types';
 
@@ -24,7 +24,7 @@ export default function CriarOrcamento() {
   const [clienteSelecionado, setClienteSelecionado] = useState<Cliente | null>(null);
   const [buscaCliente, setBuscaCliente] = useState('');
   const [clientesEncontrados, setClientesEncontrados] = useState<Cliente[]>([]);
-  const [vendedorNome, setVendedorNome] = useState(user?.nome || '');
+  const vendedorNome = user?.nome || '';
 
   const [itens, setItens] = useState<ItemOrcamento[]>([]);
   const [setores, setSetores] = useState<string[]>([]);
@@ -46,30 +46,14 @@ export default function CriarOrcamento() {
   const [condicoesEntrega, setCondicoesEntrega] = useState('');
   const [assinaturaVendedor, setAssinaturaVendedor] = useState('');
 
-  const [codigoOrcamento, setCodigoOrcamento] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const carregarCodigo = async () => {
-      if (!user?.uid) return;
-      try {
-        const lista = await buscarColecao<Orcamento>(COLECOES.ORCAMENTOS);
-        const meusOrcamentos = lista.filter((o) => o.vendedorId === user.uid);
-        setCodigoOrcamento(gerarCodigo(user.nome || '', meusOrcamentos.length));
-        setVendedorNome(user.nome || '');
-      } catch {
-        // ignore
-      }
-    };
-    carregarCodigo();
-  }, [user]);
-
-  useEffect(() => {
-    if (buscaCliente.length < 2) {
-      setClientesEncontrados([]);
-      return;
-    }
     const timeout = setTimeout(async () => {
+      if (buscaCliente.length < 2) {
+        setClientesEncontrados([]);
+        return;
+      }
       const dados = await buscarComFiltro<Cliente>(
         COLECOES.CLIENTES,
         'nome',
@@ -81,11 +65,11 @@ export default function CriarOrcamento() {
   }, [buscaCliente]);
 
   useEffect(() => {
-    if (buscaProduto.length < 2) {
-      setProdutosEncontrados([]);
-      return;
-    }
     const timeout = setTimeout(async () => {
+      if (buscaProduto.length < 2) {
+        setProdutosEncontrados([]);
+        return;
+      }
       const dados = await buscarComFiltro<Produto>(
         COLECOES.PRODUTOS,
         'nome',
@@ -155,10 +139,14 @@ export default function CriarOrcamento() {
     if (!user?.uid) return;
     setLoading(true);
     try {
+      const lista = await buscarColecao<Orcamento>(COLECOES.ORCAMENTOS);
+      const meusOrcamentos = lista.filter((o) => o.vendedorId === user.uid);
+      const codigoGerado = gerarCodigo(user.nome || '', meusOrcamentos.length);
+
       const dados: Omit<Orcamento, 'id'> = {
-        codigo: codigoOrcamento,
+        codigo: codigoGerado,
         vendedorId: user.uid,
-        vendedorNome: user.nome || '',
+        vendedorNome,
         clienteId: clienteSelecionado?.id,
         nomeCliente,
         endereco,
@@ -194,7 +182,7 @@ export default function CriarOrcamento() {
       <div className="d-flex align-items-center mb-3">
         <button onClick={() => navigate('/orcamentos')} className="btn btn-outline-secondary btn-sm me-3">← Voltar</button>
         <h2 style={{ color: '#ff530d', margin: 0 }}>Criar Novo Orçamento</h2>
-        <span className="badge ms-2" style={{ background: '#fff3e8', color: '#8a3b12', border: '1px solid #ffd6b8', borderRadius: '8px' }}>{codigoOrcamento}</span>
+        <span className="badge ms-2" style={{ background: '#fff3e8', color: '#8a3b12', border: '1px solid #ffd6b8', borderRadius: '8px' }}>Novo</span>
       </div>
 
       {/* Dados do Cliente */}
@@ -294,7 +282,7 @@ export default function CriarOrcamento() {
                 <summary className="btn btn-light w-100 text-start" style={{ fontWeight: 700, cursor: 'pointer', padding: '10px 15px' }}>
                   ▶ Itens sem setor <span className="badge bg-secondary">{itens.filter((i) => !i.setor).length} itens</span>
                 </summary>
-                <div className="p-2">{itens.filter((i) => !i.setor).map((item, _i) => {
+                <div className="p-2">{itens.filter((i) => !i.setor).map((item) => {
                   const ri = itens.indexOf(item);
                   return <RowItem key={ri} item={item} index={ri} onRemover={removerItem} onQtdChange={atualizarQuantidade} />;
                 })}</div>

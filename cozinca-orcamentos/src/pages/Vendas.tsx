@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../auth/AuthContext';
+import { useAuth } from '../auth/useAuth';
 import { buscarColecao, COLECOES } from '../firebase/firestore';
-import type { Venda } from '../types';
+import type { Orcamento, Venda } from '../types';
 
 export default function Vendas() {
   const { user } = useAuth();
@@ -29,26 +29,33 @@ export default function Vendas() {
   };
 
   const handlePDF = async (venda: Venda) => {
-    const { gerarEBaixarPDF } = await import('../components/OrcamentoPDF');
-    gerarEBaixarPDF({
-      ...venda,
+    const { gerarEBaixarPDF } = await import('../components/gerarEBaixarPDF');
+    const orcamentoParaPdf: Orcamento = {
+      id: venda.id,
       codigo: venda.id.substring(0, 8).toUpperCase(),
+      vendedorId: venda.vendedorId,
+      vendedorNome: venda.vendedorNome,
+      clienteId: venda.clienteId,
+      nomeCliente: venda.nomeCliente,
       endereco: '',
       telefone: '',
       email: '',
       cnpj: '',
+      itens: venda.itens,
       frete: 0,
       desconto: 0,
       totalProdutos: venda.totalFinal,
       totalGeral: venda.totalFinal,
       valorDesconto: 0,
+      totalFinal: venda.totalFinal,
       formaPagamento: '',
       condicoesEntrega: '',
       assinaturaVendedor: venda.vendedorNome,
       status: 'venda',
       criadoEm: venda.criadoEm,
       atualizadoEm: venda.criadoEm,
-    } as any);
+    };
+    gerarEBaixarPDF(orcamentoParaPdf);
   };
 
   if (loading) {

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../auth/AuthContext';
+import { useAuth } from '../auth/useAuth';
 import { buscarColecao, excluirDocumento, atualizarDocumento, COLECOES } from '../firebase/firestore';
 import type { Orcamento } from '../types';
 
@@ -57,7 +57,7 @@ export default function ListarOrcamentos() {
   }, []);
 
   const handlePDF = useCallback(async (orcam: Orcamento) => {
-    const { gerarEBaixarPDF } = await import('../components/OrcamentoPDF');
+    const { gerarEBaixarPDF } = await import('../components/gerarEBaixarPDF');
     gerarEBaixarPDF(orcam);
   }, []);
 

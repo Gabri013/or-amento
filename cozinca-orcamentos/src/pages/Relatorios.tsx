@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import { useAuth } from '../auth/AuthContext';
+import { useAuth } from '../auth/useAuth';
 import { buscarColecao, COLECOES } from '../firebase/firestore';
 import type { Orcamento } from '../types';
 

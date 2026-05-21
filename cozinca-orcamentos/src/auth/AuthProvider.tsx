@@ -1,25 +1,9 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { UserCredential } from 'firebase/auth';
 import { loginComEmail, logout, onAuthStateChangedWrapper } from '../firebase/auth';
-import { buscarDocumento } from '../firebase/firestore';
-import { COLECOES } from '../firebase/firestore';
+import { buscarDocumento, COLECOES } from '../firebase/firestore';
 import type { Usuario } from '../types';
-
-interface AuthContextType {
-  user: Usuario | null;
-  loading: boolean;
-  login: (email: string, senha: string) => Promise<void>;
-  logoutUser: () => Promise<void>;
-  isAdmin: boolean;
-}
-
-const AuthContext = createContext<AuthContextType>({
-  user: null,
-  loading: true,
-  login: async () => {},
-  logoutUser: async () => {},
-  isAdmin: false,
-});
+import { AuthContext } from './authContext';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<Usuario | null>(null);
@@ -68,8 +52,4 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuth() {
-  return useContext(AuthContext);
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import { useAuth } from '../auth/AuthContext';
+import { useAuth } from '../auth/useAuth';
 import { buscarColecao } from '../firebase/firestore';
 import { COLECOES } from '../firebase/firestore';
 import type { Orcamento } from '../types';
@@ -32,14 +32,17 @@ export default function Dashboard() {
         setLoading(false);
       }
     };
-    carregarDados();
+    const timeout = setTimeout(() => {
+      void carregarDados();
+    }, 0);
+    return () => clearTimeout(timeout);
   }, []);
 
-  const mesAtual = new Date();
-  const primeiroDiaMes = new Date(mesAtual.getFullYear(), mesAtual.getMonth(), 1);
-  const ultimoDiaMes = new Date(mesAtual.getFullYear(), mesAtual.getMonth() + 1, 0, 23, 59, 59);
+  const mesAtual = useMemo(() => new Date(), []);
 
   const metricasMesAtual = useMemo(() => {
+    const primeiroDiaMes = new Date(mesAtual.getFullYear(), mesAtual.getMonth(), 1);
+    const ultimoDiaMes = new Date(mesAtual.getFullYear(), mesAtual.getMonth() + 1, 0, 23, 59, 59);
     const filtrados = orcamentos.filter((o) => {
       const data = o.criadoEm instanceof Date ? o.criadoEm : new Date(o.criadoEm);
       return data >= primeiroDiaMes && data <= ultimoDiaMes;
@@ -47,11 +50,11 @@ export default function Dashboard() {
     const qtd = filtrados.length;
     const valor = filtrados.reduce((sum, o) => sum + (o.totalFinal || 0), 0);
     return { qtd, valor };
-  }, [orcamentos, primeiroDiaMes, ultimoDiaMes]);
+  }, [orcamentos, mesAtual]);
 
   const dadosGrafico = useMemo(() => {
     const ultimos6Meses: { mes: string; valor: number; qtd: number }[] = [];
-    const agora = new Date();
+    const agora = mesAtual;
     for (let i = 5; i >= 0; i--) {
       const data = new Date(agora.getFullYear(), agora.getMonth() - i, 1);
       const mesFormatado = data.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' });
@@ -68,7 +71,7 @@ export default function Dashboard() {
       });
     }
     return ultimos6Meses;
-  }, [orcamentos]);
+  }, [orcamentos, mesAtual]);
 
   if (loading) {
     return (

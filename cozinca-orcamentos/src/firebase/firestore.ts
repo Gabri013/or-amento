@@ -16,7 +16,7 @@ export async function buscarColecao<T>(
   const ref = collection(db, colecao);
   const q = filtros && filtros.length > 0 ? query(ref, ...filtros) : ref;
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((d: any) => ({ ...(d.data() as T), id: d.id }));
+  return snapshot.docs.map((d) => ({ ...(d.data() as T), id: d.id }));
 }
 
 export async function buscarDocumento<T>(
@@ -37,7 +37,7 @@ export async function salvarDocumento<T>(
   const docRef = await addDoc(ref, {
     ...dados,
     criadoEm: serverTimestamp(),
-  } as any);
+  });
   return docRef.id;
 }
 
@@ -50,7 +50,7 @@ export async function atualizarDocumento(
   await updateDoc(docRef, {
     ...dados,
     atualizadoEm: serverTimestamp(),
-  } as any);
+  });
 }
 
 export async function excluirDocumento(
@@ -69,5 +69,5 @@ export async function buscarComFiltro<T>(
   const ref = collection(db, colecao);
   const q = query(ref, where(campo, '==', valor));
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((d: any) => ({ ...(d.data() as T), id: d.id }));
+  return snapshot.docs.map((d) => ({ ...(d.data() as T), id: d.id }));
 }

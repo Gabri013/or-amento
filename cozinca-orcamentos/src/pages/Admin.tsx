@@ -22,7 +22,12 @@ export default function Admin() {
     } catch (err) { console.error(err); } finally { setLoading(false); }
   };
 
-  useEffect(() => { carregar(); }, []);
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      void carregar();
+    }, 0);
+    return () => clearTimeout(timeout);
+  }, []);
 
   const handleCriar = async (e: React.FormEvent) => {
     e.preventDefault();
